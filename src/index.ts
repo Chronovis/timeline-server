@@ -1,11 +1,12 @@
+#!/usr/bin/env node
+
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as pg from 'pg';
-import * as slug from 'slug';
+// import * as slug from 'slug';
 
 const pool = new pg.Pool({
 	database: 'timeline',
-	host: 'db',
 	idleTimeoutMillis: 3000,
 	max: 10,
 	password: 'docker',
@@ -13,13 +14,6 @@ const pool = new pg.Pool({
 	user: 'docker',
 });
 
-// pool.connect((err, client, done) => {
-// 	console.log(err)
-// 	client.query('SELECT * FROM events', (err2, result) => {
-// 		console.log(err2)
-// 		console.log(result)
-// 	})
-// })
 const sql = (event) => {
 	const s = `
 	SELECT childEvent.*, array_agg(event_type.title) AS types
@@ -31,18 +25,14 @@ const sql = (event) => {
 		AND event__event_type.event_type_id = event_type.id
 	GROUP BY childEvent.id;
 	`;
-	console.log(s)
+	console.log(s);
 	return s;
-}
+};
 
 const app = express();
 app.use(bodyParser.json());
 
-const staticDir = `${process.cwd()}/node_modules/timeline-client/dist/`;
-app.use(express.static(staticDir));
-app.get('*', (req, res) => res.sendFile(`${staticDir}index.html`));
-
-app.post('/api/events', (req, res) => {
+app.post('/events', (req, res) => {
 	pool.connect((connectionError, client, releaseClient) => {
 		if (connectionError) return console.error('Error fetching client from pool', connectionError);
 
@@ -52,8 +42,8 @@ app.post('/api/events', (req, res) => {
 			client.query(sql(req.body.event), (queryError2, result2) => {
 				if (queryError2) return console.error('Error querying database', queryError2);
 				res.send({
-					parent: result1.rows[0],
-					children: result2.rows,
+					events: result2.rows,
+					root: result1.rows[0],
 				});
 				releaseClient();
 			});
