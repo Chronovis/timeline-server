@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "prepublish": "typings install && npm run build",
-    "watch": "tsc -w",
+    "watch-typescript": "tsc -w",
     "server": "dist/index.js",
     "database": "docker run --rm -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker -e PGDATA=/pgdata -v timeline-data:/pgdata -p 5432:5432 gijsjan/postgresql:1.0"
   },

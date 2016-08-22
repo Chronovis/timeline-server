@@ -3,6 +3,8 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as pg from 'pg';
+import parseEvent from './parse-event';
+
 // import * as slug from 'slug';
 
 const pool = new pg.Pool({
@@ -42,8 +44,8 @@ app.post('/events', (req, res) => {
 			client.query(sql(req.body.event), (queryError2, result2) => {
 				if (queryError2) return console.error('Error querying database', queryError2);
 				res.send({
-					events: result2.rows,
-					root: result1.rows[0],
+					events: result2.rows.map(parseEvent),
+					root: parseEvent(result1.rows[0]),
 				});
 				releaseClient();
 			});
@@ -61,4 +63,5 @@ pool.on('error', function (err, client) {
   console.error('idle client error', err.message, err.stack);
 });
 
-app.listen(3001, () => console.log('Listening on port 3001!'));
+const port = 3999;
+app.listen(port, () => console.log(`Listening on port ${port}!`));

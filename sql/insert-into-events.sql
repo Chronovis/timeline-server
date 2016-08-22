@@ -23,14 +23,14 @@ INSERT INTO event (slug, title, date, coordinates) VALUES (
 	ST_GeographyFromText('SRID=4326;POINT(9.97 76.28)')
 );
 
-INSERT INTO event (slug, title, daterange, daterange_uncertain) VALUES (
+INSERT INTO event (slug, title, date_range, date_range_uncertain) VALUES (
 	'vasco-da-gama',
 	'Vasco da Gama',
 	'[1460-01-01, 1524-12-24]',
 	'[1469-01-01, 1524-12-24]'
 );
 
-INSERT INTO event (slug, title, daterange, coordinates) VALUES (
+INSERT INTO event (slug, title, date_range, coordinates) VALUES (
 	'portugal',
 	'Portugal',
 	'[1128-06-26, infinity)',
